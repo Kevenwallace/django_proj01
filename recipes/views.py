@@ -17,11 +17,12 @@ def category(request, category_id):
         is_published=True)
     return render(request, 'recipes/pages/category.html', context={
         'recipes': recipes,
+        'title': f"{recipes.firts().category.name}"
     })
 
 
 def recipe(request, id):
-    return render(request, 'recipes/pages/recipe-views.html', context={
+     return render(request, 'recipes/pages/recipe-views.html', context={
         'recipes': [make_recipe() for _ in range(1)],
         "list_details": True,
     })
