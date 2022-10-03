@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import get_list_or_404, get_object_or_404, render
 from recipes.models import Recipe
-from ultis.recipes.factory import make_recipe
+from django.http.response import Http404
+from django.db.models import Q
+
 
 
 # Create your views here.
@@ -12,17 +14,43 @@ def home(request):
 
 
 def category(request, category_id):
-    recipes = Recipe.objects.filter(
-        category__id=category_id,
-        is_published=True)
+    recipes = get_list_or_404(
+        Recipe.objects.filter(
+            category__id=category_id,
+            is_published=True,
+        )
+    )
     return render(request, 'recipes/pages/category.html', context={
         'recipes': recipes,
-        'title': f"{recipes.first().category.name}"
+        'title': f'{recipes[0].category.name} - Category | '
     })
 
 
 def recipe(request, id):
-     return render(request, 'recipes/pages/recipe-views.html', context={
-        'recipes': [make_recipe() for _ in range(1)],
-        "list_details": True,
+    recipe = get_object_or_404(Recipe, pk=id, is_published=True,)
+    
+    return render(request, 'recipes/pages/recipe-views.html', context={
+        "recipe":recipe,
+        'is_detail_page': True,
+    })
+
+def search(request):
+    search_term = request.GET.get('search', "").strip()
+    
+    if not search_term:
+        raise Http404()
+    
+    recipe = Recipe.objects.filter(
+        Q(    
+            Q(title__icontains=search_term) |
+            Q(description__icontains=search_term)
+        ),
+        is_published=True
+    )
+    
+    
+    return render(request, 'recipes/pages/search.html', context={
+        'page_title': f'search for "{search_term}" | ',
+        'search_term': search_term,
+        'recipes': recipe,
     })
