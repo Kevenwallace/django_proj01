@@ -7,10 +7,12 @@ For more information on this file, see
 https://docs.djangoproject.com/en/4.0/howto/deployment/asgi/
 """
 
+from json import load
 import os
-
+from dotenv import load_dotenv
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projeto.settings')
 
+load_dotenv()
 application = get_asgi_application()
