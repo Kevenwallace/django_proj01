@@ -1,0 +1,11 @@
+{% extends 'global/global.html' %}
+
+{% block title %} Register | {% endblock title %}
+
+
+{% block content %}
+    
+    {{ form.as_p }}
+    <button type="submit">send</button>
+    {{ form.errors }}
+{% endblock content %}
